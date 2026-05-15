@@ -55,3 +55,30 @@ Taskora is a gentle productivity companion designed to reduce decision fatigue a
    npm run dev
    ```
    The application will be available at `http://localhost:5173`.
+
+## 🌐 Deployment Instructions
+
+### 1. GitHub
+I have already initialized a local git repository and made the first commit. To push to GitHub:
+1. Create a new repository on GitHub called `taskora`.
+2. Run these commands in the project root:
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/taskora.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+### 2. Backend (Render / Heroku)
+- Connect your GitHub repository to **Render**.
+- Set the Root Directory to `backend`.
+- Environment Variables:
+  - `MONGODB_URI`: Your MongoDB Atlas connection string.
+  - `PORT`: 8000
+
+### 3. Frontend (Vercel / Netlify)
+- Connect your GitHub repository to **Vercel**.
+- Set the Root Directory to `frontend`.
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Environment Variables:
+  - `VITE_API_URL`: Your deployed backend URL.
