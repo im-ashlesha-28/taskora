@@ -20,11 +20,24 @@ const seedDB = require('./seed');
 let mongoServer;
 const connectDB = async () => {
   try {
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri);
-    console.log('Connected to In-Memory MongoDB ✨');
-    await seedDB();
+    const MONGODB_URI = process.env.MONGODB_URI;
+    
+    if (MONGODB_URI && MONGODB_URI.startsWith('mongodb')) {
+      await mongoose.connect(MONGODB_URI);
+      console.log('Connected to Production MongoDB ✨');
+      
+      const Task = require('./models/Task');
+      const count = await Task.countDocuments();
+      if (count === 0) {
+        await seedDB();
+      }
+    } else {
+      mongoServer = await MongoMemoryServer.create();
+      const uri = mongoServer.getUri();
+      await mongoose.connect(uri);
+      console.log('Connected to In-Memory MongoDB ✨');
+      await seedDB();
+    }
   } catch (err) {
     console.error('Could not connect to MongoDB', err);
   }
