@@ -7,21 +7,37 @@ export default {
   theme: {
     extend: {
       colors: {
-        'blush-pink': '#F8D7DA',
-        'soft-lavender': '#DCCEF9',
-        'cream-white': '#FFF9F5',
-        'warm-beige': '#F6EBDD',
-        'sage-green': '#DCE8D5',
-        'dusty-rose': '#E8B4B8',
-        'muted-lilac': '#C8B6E2',
+        'primary-gradient-start': '#ff9a9e',
+        'primary-gradient-end': '#fecfef',
+        'accent-purple': '#a18cd1',
+        'accent-blue': '#fbc2eb',
+        'glass-bg': 'rgba(255, 255, 255, 0.4)',
+        'glass-border': 'rgba(255, 255, 255, 0.6)',
+        'dark-slate': '#1e293b',
       },
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
-        nunito: ['Nunito', 'sans-serif'],
-        quicksand: ['Quicksand', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
-      borderRadius: {
-        'pill': '50px',
+      animation: {
+        'gradient-x': 'gradient-x 15s ease infinite',
+        'float': 'float 6s ease-in-out infinite',
+      },
+      keyframes: {
+        'gradient-x': {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        }
       }
     },
   },
