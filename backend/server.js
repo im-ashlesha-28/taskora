@@ -14,11 +14,22 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-// Database Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/taskora';
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB ✨'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const seedDB = require('./seed');
+
+let mongoServer;
+const connectDB = async () => {
+  try {
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri);
+    console.log('Connected to In-Memory MongoDB ✨');
+    await seedDB();
+  } catch (err) {
+    console.error('Could not connect to MongoDB', err);
+  }
+};
+connectDB();
 
 // --- Tasks Routes ---
 

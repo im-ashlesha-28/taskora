@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 const Task = require('./models/Task');
 const Reflection = require('./models/Reflection');
 
-const MONGODB_URI = 'mongodb://localhost:27017/taskora';
-
 const seedDB = async () => {
   try {
-    await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB for seeding... 🌿');
+    console.log('Seeding database... 🌿');
 
     await Task.deleteMany({});
     await Reflection.deleteMany({});
@@ -58,10 +56,9 @@ const seedDB = async () => {
       }
     ];
 
-    const insertedTasks = await Task.insertMany(tasks);
+    await Task.insertMany(tasks);
     console.log('Sample tasks inserted! ✨');
 
-    // Add a completed task and reflection
     const completedTask = new Task({
       title: "Morning Yoga 🧘‍♀️",
       description: "Daily movement for clarity.",
@@ -82,11 +79,9 @@ const seedDB = async () => {
     await reflection.save();
 
     console.log('Database seeded successfully! 🌸');
-    process.exit();
   } catch (err) {
-    console.error(err);
-    process.exit(1);
+    console.error('Error seeding DB:', err);
   }
 };
 
-seedDB();
+module.exports = seedDB;
