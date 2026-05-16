@@ -6,9 +6,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { taskService, analyticsService, recommendationService } from '../services/api';
 import TaskCard from '../components/TaskCard';
 import { FocusTimer, MoodTracker, QuickNotes } from '../components/DashboardWidgets';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [stats, setStats] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -79,7 +81,7 @@ const Dashboard = () => {
               <Sparkles size={14} /> Daily Inspiration
             </div>
             <h2 className="text-4xl md:text-5xl font-heading font-bold text-sage-900 leading-tight">
-              Good morning, <span className="text-sage-400">Alex</span>. <br />
+              Good morning, <span className="text-sage-400">{user?.name || 'Friend'}</span>. <br />
               Ready for a cozy day?
             </h2>
             <p className="text-sage-600 text-lg font-medium max-w-lg leading-relaxed">

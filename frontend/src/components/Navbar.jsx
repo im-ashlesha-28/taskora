@@ -1,9 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Sparkles, LayoutDashboard, ListTodo, PieChart, Heart, MessageCircle, Plus, Cloud } from 'lucide-react';
+import { Sparkles, LayoutDashboard, ListTodo, PieChart, Heart, MessageCircle, Plus, Cloud, LogOut, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
   const navItems = [
     { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
     { name: 'Todo List', path: '/tasks', icon: <ListTodo size={20} /> },
@@ -55,14 +57,19 @@ const Navbar = () => {
       </div>
 
       <div className="px-6 space-y-6">
-        <div className="p-6 bg-sage-50 rounded-4xl border border-sage-100 relative overflow-hidden group">
-          <div className="absolute -right-2 -bottom-2 text-sage-200/50 group-hover:scale-110 transition-transform duration-500">
-            <Heart size={60} />
+        <div className="flex items-center gap-3 px-4 py-3 bg-sage-50 rounded-3xl border border-sage-100">
+          <div className="w-10 h-10 rounded-full bg-sage-900 flex items-center justify-center text-white shadow-soft">
+            <User size={20} />
           </div>
-          <p className="text-xs font-bold text-sage-500 mb-2 relative z-10">Daily Reminder</p>
-          <p className="text-sm text-sage-700 font-medium leading-relaxed relative z-10">
-            You are doing your best, and that is enough. ✨
-          </p>
+          <div className="flex-1 overflow-hidden">
+            <p className="text-xs font-bold text-sage-900 truncate">{user?.name || 'User'}</p>
+            <button 
+              onClick={logout}
+              className="text-[10px] font-bold text-rose-400 hover:text-rose-600 transition-colors uppercase tracking-widest flex items-center gap-1"
+            >
+              <LogOut size={10} /> Logout
+            </button>
+          </div>
         </div>
 
         <NavLink

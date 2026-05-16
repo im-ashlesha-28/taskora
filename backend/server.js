@@ -7,12 +7,18 @@ const Task = require('./models/Task');
 const Reflection = require('./models/Reflection');
 const recommender = require('./logic/recommender');
 
+const authRoutes = require('./routes/auth');
+const auth = require('./middleware/auth');
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Routes
+app.use('/auth', authRoutes);
 
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const seedDB = require('./seed');
@@ -25,12 +31,6 @@ const connectDB = async () => {
     if (MONGODB_URI && MONGODB_URI.startsWith('mongodb')) {
       await mongoose.connect(MONGODB_URI);
       console.log('Connected to Production MongoDB ✨');
-      
-      const Task = require('./models/Task');
-      const count = await Task.countDocuments();
-      if (count === 0) {
-        await seedDB();
-      }
     } else {
       mongoServer = await MongoMemoryServer.create();
       const uri = mongoServer.getUri();
@@ -46,17 +46,17 @@ connectDB();
 
 // --- Tasks Routes ---
 
-app.get('/tasks', async (req, res) => {
+app.get('/tasks', auth, async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find({ user_id: req.userId });
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-app.post('/tasks', async (req, res) => {
-  const task = new Task(req.body);
+app.post('/tasks', auth, async (req, res) => {
+  const task = new Task({ ...req.body, user_id: req.userId });
   try {
     const newTask = await task.save();
     res.status(201).json(newTask);
@@ -65,9 +65,13 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
-app.put('/tasks/:id', async (req, res) => {
+app.put('/tasks/:id', auth, async (req, res) => {
   try {
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedTask = await Task.findOneAndUpdate(
+      { _id: req.params.id, user_id: req.userId }, 
+      req.body, 
+      { new: true }
+    );
     if (!updatedTask) return res.status(404).json({ message: 'Task not found' });
     res.json(updatedTask);
   } catch (err) {
@@ -75,9 +79,9 @@ app.put('/tasks/:id', async (req, res) => {
   }
 });
 
-app.delete('/tasks/:id', async (req, res) => {
+app.delete('/tasks/:id', auth, async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.id);
+    const task = await Task.findOneAndDelete({ _id: req.params.id, user_id: req.userId });
     if (!task) return res.status(404).json({ message: 'Task not found' });
     res.json({ message: 'Task deleted' });
   } catch (err) {
@@ -87,10 +91,10 @@ app.delete('/tasks/:id', async (req, res) => {
 
 // --- Recommendations ---
 
-app.post('/recommend', async (req, res) => {
+app.post('/recommend', auth, async (req, res) => {
   const { current_energy, available_time } = req.body;
   try {
-    const tasks = await Task.find({ status: 'pending' });
+    const tasks = await Task.find({ user_id: req.userId, status: 'pending' });
     const recommendations = recommender.getRecommendations(tasks, current_energy, available_time);
     res.json(recommendations);
   } catch (err) {
@@ -100,22 +104,22 @@ app.post('/recommend', async (req, res) => {
 
 // --- Reflections ---
 
-app.get('/reflections', async (req, res) => {
+app.get('/reflections', auth, async (req, res) => {
   try {
-    const reflections = await Reflection.find().populate('task_id').sort({ created_at: -1 });
+    const reflections = await Reflection.find({ user_id: req.userId }).populate('task_id').sort({ created_at: -1 });
     res.json(reflections);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-app.post('/reflection', async (req, res) => {
-  const reflection = new Reflection(req.body);
+app.post('/reflection', auth, async (req, res) => {
+  const reflection = new Reflection({ ...req.body, user_id: req.userId });
   try {
     const newReflection = await reflection.save();
     
     // Update task status
-    await Task.findByIdAndUpdate(req.body.task_id, { status: 'completed' });
+    await Task.findOneAndUpdate({ _id: req.body.task_id, user_id: req.userId }, { status: 'completed' });
     
     res.status(201).json(newReflection);
   } catch (err) {
@@ -125,10 +129,10 @@ app.post('/reflection', async (req, res) => {
 
 // --- Analytics ---
 
-app.get('/analytics', async (req, res) => {
+app.get('/analytics', auth, async (req, res) => {
   try {
-    const tasks = await Task.find();
-    const reflections = await Reflection.find().populate('task_id');
+    const tasks = await Task.find({ user_id: req.userId });
+    const reflections = await Reflection.find({ user_id: req.userId }).populate('task_id');
     
     const total_tasks = tasks.length;
     const completed_tasks = tasks.filter(t => t.status === 'completed').length;
@@ -142,7 +146,7 @@ app.get('/analytics', async (req, res) => {
     });
     const avg_error = reflections.length > 0 ? totalError / reflections.length : 0;
     
-    const most_postponed_tasks = await Task.find().sort({ postpone_count: -1 }).limit(5);
+    const most_postponed_tasks = await Task.find({ user_id: req.userId }).sort({ postpone_count: -1 }).limit(5);
     
     res.json({
       total_tasks,
