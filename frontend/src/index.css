@@ -8,8 +8,8 @@
   body {
     @apply bg-sage-50 text-dark-slate font-body antialiased;
     background-image: 
-      radial-gradient(at 0% 0%, rgba(163, 209, 163, 0.2) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(255, 254, 240, 0.4) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, rgba(168, 209, 168, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(253, 251, 240, 0.5) 0px, transparent 50%);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -37,15 +37,15 @@
 
 @layer utilities {
   .shadow-soft {
-    box-shadow: 0 10px 40px -10px rgba(163, 209, 163, 0.2), 0 0 20px rgba(255, 255, 255, 0.4) inset;
+    box-shadow: 0 10px 40px -10px rgba(168, 209, 168, 0.15), 0 0 20px rgba(255, 255, 255, 0.5) inset;
   }
 
   .shadow-hover {
-    box-shadow: 0 20px 50px -15px rgba(163, 209, 163, 0.3), 0 0 30px rgba(255, 255, 255, 0.6) inset;
+    box-shadow: 0 20px 50px -15px rgba(168, 209, 168, 0.2), 0 0 30px rgba(255, 255, 255, 0.7) inset;
   }
 
   .text-glow {
-    text-shadow: 0 0 15px rgba(163, 209, 163, 0.4);
+    text-shadow: 0 0 15px rgba(168, 209, 168, 0.3);
   }
 
   .mask-linear-b {
