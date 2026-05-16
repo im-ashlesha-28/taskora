@@ -14,7 +14,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="w-[280px] h-[calc(100vh-40px)] fixed top-5 left-5 bg-white/60 backdrop-blur-md border border-sage-100 rounded-5xl flex flex-col justify-between py-10 z-50 shadow-soft">
+    <nav className="w-[280px] h-[calc(100vh-40px)] fixed top-5 left-5 bg-white/90 backdrop-blur-xl border border-sage-100 rounded-5xl flex flex-col justify-between py-10 z-50 shadow-soft">
       <div>
         <div className="px-8 mb-12 flex items-center gap-3">
           <motion.div 

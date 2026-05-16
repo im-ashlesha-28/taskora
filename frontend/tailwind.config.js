@@ -8,22 +8,22 @@ export default {
     extend: {
       colors: {
         'sage': {
-          50: '#f4f7f1',
-          100: '#e7ede0',
-          200: '#d1dfc5',
-          300: '#b6cc9f',
-          400: '#9caf88', // Primary Sage
-          500: '#7d8f68',
-          600: '#61714f',
-          700: '#4c583e',
-          800: '#3f4834',
-          900: '#363d2d',
+          50: '#f8fdf8',
+          100: '#edf7ed',
+          200: '#daeeda',
+          300: '#c2e2c2',
+          400: '#a3d1a3', // Brighter Primary Sage
+          500: '#86b886',
+          600: '#6a9c6a',
+          700: '#547d54',
+          800: '#446444',
+          900: '#364d36',
         },
-        'pastel-green': '#d1dfc5',
-        'soft-cream': '#fefae0',
-        'muted-olive': '#6b705c',
-        'cozy-tan': '#e9edc9',
-        'dark-slate': '#363d2d', // Muted dark for text
+        'pastel-green': '#daeeda',
+        'soft-cream': '#fffef0',
+        'muted-olive': '#868e7d',
+        'cozy-tan': '#f0f3db',
+        'dark-slate': '#2d3b2d', // Fresher dark green
       },
       borderRadius: {
         '4xl': '2rem',
