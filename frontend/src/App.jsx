@@ -7,6 +7,7 @@ import AddTaskPage from './pages/AddTaskPage';
 import RecommendationPage from './pages/RecommendationPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import ReflectionPage from './pages/ReflectionPage';
+import BucketListPage from './pages/BucketListPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="recommendations" element={<RecommendationPage />} />
           <Route path="reflection" element={<ReflectionPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="bucket-list" element={<BucketListPage />} />
         </Route>
       </Routes>
     </Router>

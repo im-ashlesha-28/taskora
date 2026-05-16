@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Clock, Brain, Save } from 'lucide-react';
+import { X, Heart, Clock, Brain, Save, Sparkles } from 'lucide-react';
 import { reflectionService } from '../services/api';
 
 const ReflectionModal = ({ task, isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
-    task_id: task?._id,
-    actual_time_taken: task?.estimated_time || 30,
+    task_id: '',
+    actual_time_taken: 30,
     perceived_difficulty: 3,
     reflection_text: ''
   });
+
+  useEffect(() => {
+    if (task) {
+      setFormData(prev => ({
+        ...prev,
+        task_id: task._id,
+        actual_time_taken: task.estimated_time || 30
+      }));
+    }
+  }, [task]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,62 +44,70 @@ const ReflectionModal = ({ task, isOpen, onClose, onSuccess }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-sage-900/40 backdrop-blur-md"
           />
           
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-8 overflow-hidden"
+            className="relative bg-white w-full max-w-xl rounded-6xl shadow-hover p-10 md:p-12 overflow-hidden"
           >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-sage-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            
             <button 
               onClick={onClose}
-              className="absolute top-6 right-6 text-slate-300 hover:text-slate-500 transition-colors"
+              className="absolute top-8 right-8 text-sage-300 hover:text-sage-900 transition-colors z-20"
             >
-              <X size={24} />
+              <X size={28} />
             </button>
 
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">Gentle Reflection 🌿</h3>
-              <p className="text-slate-500">You completed: <span className="font-semibold text-dusty-rose">{task?.title}</span></p>
+            <div className="mb-10 relative z-10">
+              <div className="inline-flex p-3 rounded-2xl bg-sage-50 text-sage-400 mb-4">
+                <Sparkles size={24} />
+              </div>
+              <h3 className="text-3xl font-heading font-bold text-sage-900 mb-2">Gentle Reflection 🌿</h3>
+              <p className="text-sage-500 font-medium leading-relaxed">
+                You've bloomed! Tell us about your journey with: <br />
+                <span className="font-bold text-sage-900">"{task?.title}"</span>
+              </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2 flex items-center gap-2">
-                  <Clock size={16} className="text-warm-beige" /> How long did it actually take? (min)
+            <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-sage-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                  <Clock size={16} className="text-sage-400" /> Actual Time Taken (min)
                 </label>
                 <input 
                   type="number"
-                  className="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-soft-lavender transition-all"
+                  className="soft-input !py-4"
                   value={formData.actual_time_taken}
                   onChange={(e) => setFormData({...formData, actual_time_taken: parseInt(e.target.value)})}
                 />
               </div>
 
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-sm font-semibold text-slate-600 flex items-center gap-2">
-                    <Brain size={16} className="text-blush-pink" /> How difficult was it?
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-sage-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                    <Brain size={16} className="text-sage-300" /> Perceived Difficulty
                   </label>
-                  <span className="text-xs font-bold text-blush-pink">{formData.perceived_difficulty}/5</span>
+                  <span className="text-sm font-bold text-sage-900">{formData.perceived_difficulty}/5</span>
                 </div>
                 <input 
                   type="range" min="1" max="5" 
-                  className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blush-pink"
+                  className="w-full h-2 bg-sage-50 rounded-lg appearance-none cursor-pointer accent-sage-400"
                   value={formData.perceived_difficulty}
                   onChange={(e) => setFormData({...formData, perceived_difficulty: parseInt(e.target.value)})}
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2 flex items-center gap-2">
-                  <Heart size={16} className="text-dusty-rose" /> Any thoughts or feelings?
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-sage-400 uppercase tracking-widest ml-4 flex items-center gap-2">
+                  <Heart size={16} className="text-rose-400" /> Heart's Whispers
                 </label>
                 <textarea 
-                  className="w-full px-4 py-3 rounded-2xl border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-soft-lavender transition-all min-h-[100px]"
-                  placeholder="I felt a bit overwhelmed at first, but then..."
+                  className="soft-input min-h-[120px] resize-none !py-4 font-handwritten text-xl"
+                  placeholder="How did this task make you feel?"
                   value={formData.reflection_text}
                   onChange={(e) => setFormData({...formData, reflection_text: e.target.value})}
                 />
@@ -97,9 +115,9 @@ const ReflectionModal = ({ task, isOpen, onClose, onSuccess }) => {
 
               <button 
                 type="submit"
-                className="w-full py-4 bg-sage-green text-white rounded-2xl font-bold shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                className="w-full sage-button !py-5 !text-lg"
               >
-                <Save size={20} /> Save Reflection
+                <Save size={20} /> Capture this Moment
               </button>
             </form>
           </motion.div>
